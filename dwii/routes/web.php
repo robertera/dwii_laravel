@@ -63,23 +63,59 @@ Route::get('/alunos/limite/{total}', function($total){
     foreach($dados as $chave => $aux){
         if($count < $total){
             $alunos .= "<li>".$chave."-".$dados[$chave]['nome']."</li>";
-        }
+            }
         $count++;
-    }
-} else {
-    $alunos .= "<li>Não foi possivel retornar o valor!</li>";
-    }                                                                                
+        }
     } else {
+    $alunos .= "<li>Numero maximo de ".count($dados)." matriculas</li>";
+    }                                                                                
+} else {
     $alunos .= "<li>O valor não é inteiro</li>";
     }
     return $alunos;
 });
 
 //Numero 3
-Route::get('/alunos/matricula/{matricula}', function($total, $matricula){
-
+Route::get('/alunos/matricula/{matricula}', function($matricula){
+    $alunos = "<ul>";
+    $dados = alunos();
     
 
+    if($matricula < 1 || $matricula > count($dados)){
+        $alunos .= "Matricula não encontrada!";
+    } else {
+        foreach($dados as $chave => $mat){
+            if($matricula == $chave){
+                $alunos .= "<li>".$chave."-".$mat['nome']."</li>";
+                }
+        }
+    }
+
+    $alunos .= "</ul>";
+
     return $alunos;
+});
+
+//Numero 4
+Route::get('/aluno/nome/{nome}', function($nome){
+    $aluno = "<ul>";
+    $dados = alunos();
+
+    foreach($dados as $chave => $aux){
+        foreach($aux as $name => $valor){
+            if(trim($name) == "nome"){
+                if(trim ($valor) == trim($nome)){
+                    $aluno .= "<li>".$chave."-". $nome . "</li>";
+                    break;
+                }
+            }
+        }
+    }
+
+    if (trim($aluno) == "<ul>") {
+        $aluno .= "<li>NÃO ENCONTRADO</li>";
+    }
+
+    return $aluno;
 });
 

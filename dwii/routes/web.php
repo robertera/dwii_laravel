@@ -7,7 +7,8 @@ Route::get('/', function () {
     return "<h1>Rota Principal</h2>";
 });
 
-function alunos(){
+function alunos()
+{
     $dados = array(
         "1" => array(
             'nome' => "Bruno Zorba",
@@ -38,7 +39,7 @@ function alunos(){
 }
 
 //Numero 1
-Route::get('/alunos', function () {
+Route::get('/aluno', function () {
     $alunos =  "<ul>
     <li>Bruno Zorba</li>
     <li>Hideki Zorba</li>
@@ -48,46 +49,46 @@ Route::get('/alunos', function () {
     </ul>";
 
     return $alunos;
-})-> name('alunos');
+})->name('alunos');
 
 //Numero 2
-Route::get('/alunos/limite/{total}', function($total){
+Route::get('/aluno/limite/{limite}', function ($limite) {
 
     $alunos = "<ul>";
-    if(preg_match('/^[1-9][0-9]*$/', $total)){
-    $dados = alunos();
-    
-    if($total <= count($dados) && $total > 0){
-        $count = 0;
-        
-    foreach($dados as $chave => $aux){
-        if($count < $total){
-            $alunos .= "<li>".$chave."-".$dados[$chave]['nome']."</li>";
+    if (preg_match('/^[1-9][0-9]*$/', $limite)) {
+        $dados = alunos();
+
+        if ($limite <= count($dados) && $limite > 0) {
+            $count = 0;
+
+            foreach ($dados as $chave => $aux) {
+                if ($count < $limite) {
+                    $alunos .= "<li>" . $chave . "-" . $dados[$chave]['nome'] . "</li>";
+                }
+                $count++;
             }
-        $count++;
+        } else {
+            $alunos .= "<li>Numero maximo de " . count($dados) . " matriculas</li>";
         }
     } else {
-    $alunos .= "<li>Numero maximo de ".count($dados)." matriculas</li>";
-    }                                                                                
-} else {
-    $alunos .= "<li>O valor não é inteiro</li>";
+        $alunos .= "<li>O valor não é inteiro</li>";
     }
     return $alunos;
 });
 
 //Numero 3
-Route::get('/alunos/matricula/{matricula}', function($matricula){
+Route::get('/aluno/matricula/{matricula}', function ($matricula) {
     $alunos = "<ul>";
     $dados = alunos();
-    
 
-    if($matricula < 1 || $matricula > count($dados)){
+
+    if ($matricula < 1 || $matricula > count($dados)) {
         $alunos .= "Matricula não encontrada!";
     } else {
-        foreach($dados as $chave => $mat){
-            if($matricula == $chave){
-                $alunos .= "<li>".$chave."-".$mat['nome']."</li>";
-                }
+        foreach ($dados as $chave => $aux) {
+            if ($matricula == $chave) {
+                $alunos .= "<li>" . $chave . "-" . $aux['nome'] . "</li>";
+            }
         }
     }
 
@@ -97,15 +98,15 @@ Route::get('/alunos/matricula/{matricula}', function($matricula){
 });
 
 //Numero 4
-Route::get('/aluno/nome/{nome}', function($nome){
+Route::get('/aluno/nome/{nome}', function ($nome) {
     $aluno = "<ul>";
     $dados = alunos();
 
-    foreach($dados as $chave => $aux){
-        foreach($aux as $name => $valor){
-            if(trim($name) == "nome"){
-                if(trim ($valor) == trim($nome)){
-                    $aluno .= "<li>".$chave."-". $nome . "</li>";
+    foreach ($dados as $chave => $aux) {
+        foreach ($aux as $name => $valor) {
+            if (trim($name) == "nome") {
+                if (trim($valor) == trim($nome)) {
+                    $aluno .= "<li>" . $chave . "-" . $nome . "</li>";
                     break;
                 }
             }
@@ -116,6 +117,55 @@ Route::get('/aluno/nome/{nome}', function($nome){
         $aluno .= "<li>NÃO ENCONTRADO</li>";
     }
 
+    $aluno .= "</ul>";
     return $aluno;
 });
 
+//Numero 5
+Route::get('/nota', function () {
+    $alunos = "<ul>";
+    $dados = alunos();
+
+    $alunos = "<table> <th> Matricula </th> <th> Aluno </th> <th> Nota </th> <tbody align = center>";
+
+    foreach ($dados as $chave => $aux) {
+        $alunos .= "<tr><td>" . $chave . "</td>";
+        foreach ($aux as $chave => $valor) {
+            $alunos .= "<td>" . $valor . "</td>";
+        }
+        $alunos .= "<tr>";
+    }
+    $alunos .= "</tbody>";
+
+    $alunos .= "</ul>";
+    return $alunos;
+});
+
+//Numero 6
+Route::get('/nota/limite/{limite}', function ($limite) {
+    $alunos = "<ul>";
+    $dados = alunos();
+
+    $alunos = "<table> <th> Matricula </th> <th> Aluno </th> <th> Nota </th> <tbody align = center>";
+
+    $count = 0;
+    foreach ($dados as $chave => $aux) {
+        if ($count < $limite) {
+            $alunos .= "<tr><td>" . $chave . "</td>";
+            foreach ($aux as $chave => $valor) {
+                $alunos .= "<td>" . $valor . "</td>";
+            }
+            $alunos .= "<tr>";
+        }
+        $count++;
+    }
+
+    $alunos .= "</tbody>";
+
+    $alunos .= "</ul>";
+    return $alunos;
+});
+
+//Numero 7
+Route::get('/nota/lancar/{nota}/{matricula}/{nome}', function ($nota, $matricula, $nome) {
+});

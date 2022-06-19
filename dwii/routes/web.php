@@ -144,28 +144,96 @@ Route::get('/nota', function () {
 //Numero 6
 Route::get('/nota/limite/{limite}', function ($limite) {
     $alunos = "<ul>";
-    $dados = alunos();
+    if (preg_match('/^[1-9][0-9]*$/', $limite)) {
+        $dados = alunos();
 
-    $alunos = "<table> <th> Matricula </th> <th> Aluno </th> <th> Nota </th> <tbody align = center>";
+        $alunos = "<table> <th> Matricula </th> <th> Aluno </th> <th> Nota </th> <tbody align = center>";
 
-    $count = 0;
-    foreach ($dados as $chave => $aux) {
-        if ($count < $limite) {
-            $alunos .= "<tr><td>" . $chave . "</td>";
-            foreach ($aux as $chave => $valor) {
-                $alunos .= "<td>" . $valor . "</td>";
+
+        if ($limite <= count($dados) && $limite > 0) {
+            $count = 0;
+            foreach ($dados as $chave => $aux) {
+                if ($count < $limite) {
+                    $alunos .= "<tr><td>" . $chave . "</td>";
+                    foreach ($aux as $chave => $valor) {
+                        $alunos .= "<td>" . $valor . "</td>";
+                    }
+                    $alunos .= "<tr>";
+                }
+                $count++;
             }
-            $alunos .= "<tr>";
+            $alunos .= "</tbody>";
+        } else {
+            $alunos = "<font color = red><big><b> Numero Maximo invalido! </b></font></big>";
         }
-        $count++;
+    } else {
+        $alunos = "<font color = red><big><b> Digite um valor inteiro! </b></font></big>";
     }
-
-    $alunos .= "</tbody>";
 
     $alunos .= "</ul>";
     return $alunos;
 });
 
-//Numero 7
-Route::get('/nota/lancar/{nota}/{matricula}/{nome}', function ($nota, $matricula, $nome) {
+//Numero 7 com nota
+Route::get('/nota/lancar/{nota}/{matricula}/{nome}', function ($nota, $matricula, $nome = null) {
+    $dados = alunos();
+
+    if (empty($nome)) {
+        foreach ($dados as $valor => $aux) {
+            if ($valor == $matricula) {
+                $dados[$valor]['nota'] = $nota;
+            }
+        }
+    } else {
+        foreach ($dados as $valor => $aux) {
+            if (trim($dados[$valor]['nome']) == trim($nome)) {
+                $dados[$valor]['nota'] = $nota;
+            }
+        }
+    }
+
+    $alunos = "<table> <th> Matricula </th> <th> Aluno </th> <th> Nota </th> <tbody align = center>";
+
+    foreach ($dados as $chave => $aux) {
+        $alunos .= "<tr><td>" . $chave . "</td>";
+        foreach ($aux as $chave => $valor) {
+            $alunos .= "<td>" . $valor . "</td>";
+        }
+        $alunos .= "<tr>";
+    }
+    $alunos .= "</tbody>";
+
+    return $alunos;
+});
+
+// Numero 7 com conceito
+Route::get('/nota/conceito/{A}/{B}/{C}', function ($A, $B, $C) {
+    $dados = alunos();
+
+    foreach ($dados as $key => $value) {
+        if ($dados[$key]['nota'] >= $A) {
+            $dados[$key]['nota'] = 'A';
+        } elseif ($dados[$key]['nota'] >= $B) {
+            $dados[$key]['nota'] = 'B';
+        } elseif ($dados[$key]['nota'] >= $C) {
+            $dados[$key]['nota'] = 'C';
+        } else {
+            $dados[$key]['nota'] = 'D';
+        }
+    }
+
+    var_dump($dados);
+
+    $alunos = "<table> <th> Matricula </th> <th> Aluno </th> <th> Nota </th> <tbody align = center>";
+
+    foreach ($dados as $chave => $aux) {
+        $alunos .= "<tr><td>" . $chave . "</td>";
+        foreach ($aux as $chave => $valor) {
+            $alunos .= "<td>" . $valor . "</td>";
+        }
+        $alunos .= "<tr>";
+    }
+    $alunos .= "</tbody>";
+
+    return $alunos;
 });

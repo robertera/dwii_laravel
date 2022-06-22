@@ -2,4 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/cidades', 'CidadeController@index');
+Route::redirect('/', '/cidades', 301);
+
+Route::resource('cidades', 'CidadeController');

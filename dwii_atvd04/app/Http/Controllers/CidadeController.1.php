@@ -8,8 +8,8 @@ class CidadeController extends Controller
 {
     public $cidades = [[
         'id' => 1,
-        'nome'  => 'Matinhos',
-        'porte' => 'medio'
+        'nome'  => 'Curitiba',
+        'porte' => 'grande'
     ]];
 
     public function __construct() {

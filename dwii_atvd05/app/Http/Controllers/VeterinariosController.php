@@ -14,7 +14,7 @@ class VeterinariosController extends Controller
 
     public $veterinarios = [[
         "crmv" => 1,
-        "nome" => "Gil Eduardo",
+        "nome" => "Robs",
         "especialidade" => "Geral"
     ]];
 

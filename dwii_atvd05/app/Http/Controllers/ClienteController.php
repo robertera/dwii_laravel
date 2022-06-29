@@ -9,8 +9,8 @@ class ClienteController extends Controller {
     
     public $clientes = [[
         "id" => 1,
-        "nome" => "Gil Eduardo",
-        "email" => "gil@gmail.com"
+        "nome" => "Robs",
+        "email" => "robs@email.com"
     ]];
 
     public function __construct() {

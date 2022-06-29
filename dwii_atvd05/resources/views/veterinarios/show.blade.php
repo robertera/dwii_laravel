@@ -11,7 +11,9 @@
 <body>
     <a href="{{route('veterinarios.index')}}">Voltar</a>
     <br>
-    <label>CRMV: </label>{{$dados['crmv']}}
+    <label>ID: </label>{{$dados['id']}}
+    <br>
+    <label>Crmv: </label>{{$dados['crmv']}}
     <br>
     <label>Nome: </label>{{$dados['nome']}}
     <br>

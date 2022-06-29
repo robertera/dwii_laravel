@@ -10,9 +10,9 @@
             
             <!-- Utiliza o componente "datalist" criado -->
             <x-datalistVet 
-                :header="['CRMV', 'NOME', 'ESPECIALIDADE', 'AÇÕES']" 
+                :header="['ID', 'CRMV', 'NOME', 'ESPECIALIDADE', 'AÇÕES']" 
                 :data="$dados"
-                :hide="[true, true, false, false]" 
+                :hide="[true, false, true, false, false]" 
             />
 
         </div>

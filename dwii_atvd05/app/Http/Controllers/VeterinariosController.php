@@ -13,7 +13,8 @@ class VeterinariosController extends Controller
      */
 
     public $veterinarios = [[
-        "crmv" => 1,
+        "id" => 1,
+        "crmv" => 11122233,
         "nome" => "Robs",
         "especialidade" => "Geral"
     ]];
@@ -53,17 +54,18 @@ class VeterinariosController extends Controller
     public function store(Request $request)
     {
         $aux = session('veterinarios');
-        $crmvs = array_column($aux, 'crmv');
+        $ids = array_column($aux, 'id');
 
-        if(count($crmvs) > 0) {
-            $new_crmv = max($crmvs) + 1;
+        if(count($ids) > 0) {
+            $new_id = max($ids) + 1;
         }
         else {
-            $new_crmv = 1;   
+            $new_id = 1;   
         }
 
         $novo = [
-            "crmv" => $new_crmv,
+            "id" => $new_id,
+            "crmv" => $request->crmv,
             "nome" => $request->nome,
             "especialidade" => $request->especialidade
         ];
@@ -80,11 +82,11 @@ class VeterinariosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($crmv)
+    public function show($id)
     {
         $aux = session('veterinarios');
         
-        $index = array_search($crmv, array_column($aux, 'crmv'));
+        $index = array_search($id, array_column($aux, 'id'));
 
         $dados = $aux[$index];
 
@@ -97,11 +99,11 @@ class VeterinariosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($crmv)
+    public function edit($id)
     {
         $aux = session('veterinarios');
             
-        $index = array_search($crmv, array_column($aux, 'crmv'));
+        $index = array_search($id, array_column($aux, 'id'));
 
         $dados = $aux[$index];    
 
@@ -115,14 +117,15 @@ class VeterinariosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $crmv)
+    public function update(Request $request, $id)
     {
         $aux = session('veterinarios');
         
-        $index = array_search($crmv, array_column($aux, 'crmv'));
+        $index = array_search($id, array_column($aux, 'id'));
 
         $novo = [
-            "crmv" => $crmv,
+            "id" => $id,
+            "crmv" => $request->crmv,
             "nome" => $request->nome,
             "especialidade" => $request->especialidade,
         ];
@@ -139,11 +142,11 @@ class VeterinariosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($crmv)
+    public function destroy($id)
     {
         $aux = session('veterinarios');
         
-        $index = array_search($crmv, array_column($aux, 'crmv')); 
+        $index = array_search($id, array_column($aux, 'id')); 
 
         unset($aux[$index]);
 

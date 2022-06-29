@@ -5,9 +5,17 @@
 <!-- Preenche o conteúdo da seção "conteudo" -->
 @section('conteudo')
 
-<form action="{{ route('veterinarios.update', $dados['crmv']) }}" method="POST">
+<form action="{{ route('veterinarios.update', $dados['id']) }}" method="POST">
     @csrf
     @method('PUT')
+    <div class="row">
+        <div class="col">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="crmv" placeholder="Crmv" value="{{old('crmv')}}" />
+                <label for="nome">Crmv do Veterinario</label>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <div class="form-floating mb-3">

@@ -1,7 +1,7 @@
 <!-- Herda o layout padrão definido no template "main" -->
-@extends('templates.main', ['titulo' => "Clientes", 'rota' => "clientes.create"])
+@extends('templates.main', ['titulo' => "Especialidades", 'rota' => "especialidades.create"])
 <!-- Preenche o conteúdo da seção "titulo" -->
-@section('titulo') Clientes @endsection
+@section('titulo') Especialidades @endsection
 <!-- Preenche o conteúdo da seção "conteudo" -->
 @section('conteudo')
 
@@ -10,13 +10,13 @@
             
             <!-- Utiliza o componente "datalist" criado -->
             <x-datalist 
-                :title="'Clientes'"
-                :crud="'clientes'"
-                :header="['ID', 'NOME', 'EMAIL', 'AÇÕES']" 
-                :fields="['id', 'nome', 'email']"
+                :title="'Especialidades'"
+                :crud="'especialidades'"
+                :header="['ID', 'NOME', 'DESCRIÇÃO', 'AÇÕES']" 
+                :fields="['id', 'nome', 'descricao']"
                 :data="$dados"
                 :hide="[true, false, true, false]" 
-                :info="['id', 'nome', 'email']"
+                :info="['id', 'nome', 'descricao']"
                 :remove="'nome'"
             />
         </div>

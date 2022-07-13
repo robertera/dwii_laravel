@@ -2,155 +2,115 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Especialidade;
+use App\Models\Veterinario;
 use Illuminate\Http\Request;
 
 class VeterinariosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    public $veterinarios = [[
-        "id" => 1,
-        "crmv" => 11122233,
-        "nome" => "Robs",
-        "especialidade" => "Geral"
-    ]];
-
-    public function __construct() {
-        $aux = session('veterinarios');
-
-        if(!isset($aux)) {
-            session(['veterinarios' => $this->veterinarios]);
-        }
-    }
 
     public function index()
     {
-        $dados = session('veterinarios');
-        $clinica = "VetClin DWII";
-
-        return view('veterinarios.index', compact(['dados', 'clinica']));
+        $dados = Veterinario::all();
+        return view('veterinarios.index', compact('dados'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function create()
     {
-        return view('veterinarios.create');
+        $esp = Especialidade::all();
+        return view('veterinarios.create', compact('esp'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $aux = session('veterinarios');
-        $ids = array_column($aux, 'id');
-
-        if(count($ids) > 0) {
-            $new_id = max($ids) + 1;
-        }
-        else {
-            $new_id = 1;   
-        }
-
-        $novo = [
-            "id" => $new_id,
-            "crmv" => $request->crmv,
-            "nome" => $request->nome,
-            "especialidade" => $request->especialidade
+        $regras = [
+            'crmv' => 'required|max:10|min:5|unique:veterinarios',
+            'nome' => 'required|max:100|min:10',
+            'especialidade_id' => 'required'
         ];
 
-        array_push($aux, $novo);
-        session(['veterinarios' => $aux]);
+        $msgs = [
+            "required" => "O preenchimento do campo [:attribute] é obrigatório!",
+            "max" => "O campo [:attribute] possui tamanho máximo de [:max] caracteres!",
+            "min" => "O campo [:attribute] possui tamanho mínimo de [:min] caracteres!",
+            "unique" => "Já existe um Veterinário cadastrado com esse [:attribute]!"
+        ];
 
+        echo $request->especialidade_id;
+
+        $request->validate($regras, $msgs);
+
+        Veterinario::create([
+            'crmv' => $request->crmv,
+            'nome' => $request->nome,
+            'especialidade_id' => $request->especialidade_id,
+        ]);
+        
         return redirect()->route('veterinarios.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $aux = session('veterinarios');
-        
-        $index = array_search($id, array_column($aux, 'id'));
-
-        $dados = $aux[$index];
-
-        return view('veterinarios.show', compact('dados'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        $aux = session('veterinarios');
-            
-        $index = array_search($id, array_column($aux, 'id'));
+        $dados = Veterinario::find($id);
+        $esp = Especialidade::all();
 
-        $dados = $aux[$index];    
+        if(!isset($dados)) { return "<h1>ID: $id não encontrado!</h1>"; }
 
-        return view('veterinarios.edit', compact('dados')); 
+        // dd($dados);
+
+        echo($dados->id);
+
+        return view('veterinarios.edit', compact(['dados','esp']));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        $aux = session('veterinarios');
-        
-        $index = array_search($id, array_column($aux, 'id'));
+        $obj = Veterinario::find($id);
 
-        $novo = [
-            "id" => $id,
-            "crmv" => $request->crmv,
-            "nome" => $request->nome,
-            "especialidade" => $request->especialidade,
+        if(!isset($obj)) { return "<h1>ID: $id não encontrado!"; }
+
+        if ($request->crmv == $obj->crmv) {
+            $regras = [
+                'crmv' => 'required|max:10|min:5',
+                'nome' => 'required|max:100|min:10',
+                'especialidade_id' => 'required'
+            ];
+        }else{
+            $regras = [
+                'crmv' => 'required|max:10|min:5|unique:veterinarios',
+                'nome' => 'required|max:100|min:10',
+                'especialidade_id' => 'required'
+            ];
+        }
+
+        $msgs = [
+            "required" => "O preenchimento do campo Especialidade é obrigatório!",
+            "max" => "O campo [:attribute] possui tamanho máximo de [:max] caracteres!",
+            "min" => "O campo [:attribute] possui tamanho mínimo de [:min] caracteres!",
+            "unique" => "Já existe um Veterinário cadastrado com esse [:attribute]!"
         ];
 
-        $aux[$index] = $novo;
-        session(['veterinarios' => $aux]);
+        $request->validate($regras, $msgs);
+
+        $obj->fill([
+            'crmv' => $request->crmv,
+            'nome' => $request->nome,
+            'especialidade' => $request->especialidade,
+        ]);
+
+        $obj->save();
 
         return redirect()->route('veterinarios.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        $aux = session('veterinarios');
-        
-        $index = array_search($id, array_column($aux, 'id')); 
+        $obj = Veterinario::find($id);
 
-        unset($aux[$index]);
+        if(!isset($obj)) { return "<h1>ID: $id não encontrado!"; }
 
-        session(['veterinarios' => $aux]);
+        $obj->destroy($id);
 
         return redirect()->route('veterinarios.index');
     }

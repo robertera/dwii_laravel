@@ -17,7 +17,6 @@ Route::get('/', function () {
     return view('templates.main')->with('titulo', "");
 })->name('index');
 
-
 Route::resource('clientes', 'ClienteController');
-
 Route::resource('veterinarios', 'VeterinariosController');
+Route::resource('especialidades', 'EspecialidadeController');

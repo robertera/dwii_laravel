@@ -1,113 +1,97 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Cliente;
 
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller {
     
-    
-    public $clientes = [[
-        "id" => 1,
-        "nome" => "Robs",
-        "email" => "robs@email.com"
-    ]];
-
-    public function __construct() {
-        $aux = session('clientes');
-
-        if(!isset($aux)) {
-            session(['clientes' => $this->clientes]);
-        }
-    }
-    
     public function index() {
-        
-        $dados = session('clientes');
-        $clinica = "VetClin DWII";
 
-        // Passa um array "dados" com os "clientes" e a string "clínicas"
-        return view('clientes.index', compact(['dados', 'clinica']));
-        // return view('cliente.index')->with('dados', $dados)->with('clinica', $clinica);
+        $dados = Cliente::all();
+        return view('clientes.index', compact('dados'));
     }
 
     public function create() {
-
         return view('clientes.create');
     }
 
    public function store(Request $request) {
-        
-        $aux = session('clientes');
-        $ids = array_column($aux, 'id');
 
-        if(count($ids) > 0) {
-            $new_id = max($ids) + 1;
-        }
-        else {
-            $new_id = 1;   
-        }
-
-        $novo = [
-            "id" => $new_id,
-            "nome" => $request->nome,
-            "email" => $request->email
+        $regras = [
+            'nome' => 'required|max:100|min:10',
+            'email' => 'required|max:150|min:15|unique:clientes'
         ];
 
-        array_push($aux, $novo);
-        session(['clientes' => $aux]);
+        $msgs = [
+            "required" => "O preenchimento do campo [:attribute] é obrigatório!",
+            "max" => "O campo [:attribute] possui tamanho máximo de [:max] caracteres!",
+            "min" => "O campo [:attribute] possui tamanho mínimo de [:min] caracteres!",
+            "unique" => "Já existe um Cliente cadastrado com esse [:attribute]!"
+        ];
 
+        $request->validate($regras, $msgs);
+        
+        Cliente::create([
+            'nome' => mb_strtoupper($request->nome, 'UTF-8'),
+            'email' => $request->email,
+        ]);
+        
         return redirect()->route('clientes.index');
-    }
-
-    public function show($id) {
-        
-        $aux = session('clientes');
-        
-        $index = array_search($id, array_column($aux, 'id'));
-
-        $dados = $aux[$index];
-
-        return view('clientes.show', compact('dados'));
     }
 
     public function edit($id) {
 
-        $aux = session('clientes');
-            
-        $index = array_search($id, array_column($aux, 'id'));
+        $dados = Cliente::find($id);
 
-        $dados = $aux[$index];    
+        if(!isset($dados)) { return "<h1>ID: $id não encontrado!</h1>"; }
 
-        return view('clientes.edit', compact('dados'));        
+        return view('clientes.edit', compact('dados'));            
     }
 
     public function update(Request $request, $id) {
         
-        $aux = session('clientes');
-        
-        $index = array_search($id, array_column($aux, 'id'));
+        $obj = Cliente::find($id);
 
-        $novo = [
-            "id" => $id,
-            "nome" => $request->nome,
-            "email" => $request->email,
+        if(!isset($obj)) { return "<h1>ID: $id não encontrado!"; }
+
+        if (trim($request->email) == trim($obj->email)) {
+            $regras = [
+                'nome' => 'required|max:100|min:10'
+            ];
+        }else{
+            $regras = [
+                'nome' => 'required|max:100|min:10',
+                'email' => 'required|max:150|min:15|unique:clientes'
+            ];
+        }
+
+        $msgs = [
+            "required" => "O preenchimento do campo [:attribute] é obrigatório!",
+            "max" => "O campo [:attribute] possui tamanho máximo de [:max] caracteres!",
+            "min" => "O campo [:attribute] possui tamanho mínimo de [:min] caracteres!",
+            "unique" => "Já existe um Cliente cadastrado com esse [:attribute]!"
         ];
 
-        $aux[$index] = $novo;
-        session(['clientes' => $aux]);
+        $request->validate($regras, $msgs);
+
+        $obj->fill([
+            'nome' => mb_strtoupper($request->nome, 'UTF-8'),
+            'email' => $request->email,
+        ]);
+
+        $obj->save();
 
         return redirect()->route('clientes.index');
     }
 
     public function destroy($id) {
-        $aux = session('clientes');
-        
-        $index = array_search($id, array_column($aux, 'id')); 
+        $obj = Cliente::find($id);
 
-        unset($aux[$index]);
+        if(!isset($obj)) { return "<h1>ID: $id não encontrado!"; }
 
-        session(['clientes' => $aux]);
+        $obj->destroy($id);
 
         return redirect()->route('clientes.index');
     }
